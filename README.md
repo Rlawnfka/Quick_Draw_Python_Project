@@ -4,6 +4,6 @@
 ## 2. Team Members (팀원 소개)
 | 김승주 | 김주람 |
 |:------:|:------:|
-| [![김승주](https://avatars.githubusercontent.com/u/173859136?v=4)](https://github.com/01150104) |        |
-| 디자인, 백엔드 | AI 학습 |
+| [![김승주](https://avatars.githubusercontent.com/u/173859136?v=4)](https://github.com/01150104) | [![김주람](https://avatars.githubusercontent.com/u/165885903?v=4)](https://github.com/Rlawnfka) |
+| 기획, 디자인, 백엔드 | AI 학습 |
 | [GitHub](https://github.com/01150104) | [GitHub](https://github.com/Rlawnfka) |
