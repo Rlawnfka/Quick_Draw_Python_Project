@@ -1,4 +1,6 @@
 import ndjson
 
-with open("dataset.ndjson") as f : 
+with open("cat.ndjson") as f : 
     data = ndjson.load(f)
+
+print(data[0].keys())
