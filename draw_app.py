@@ -1,3 +1,5 @@
+import numpy as np
+import cv2
 import customtkinter as ctk
 from PIL import Image, ImageDraw
 
@@ -91,6 +93,12 @@ def save_drawing():
     for stroke in strokes:
         for i in range(len(stroke) - 1):
             d.line([stroke[i], stroke[i + 1]], fill="black", width=5)
+
+        for i in range(len(stroke[0]) - 1) : 
+            x1, y1 = stroke[0][i], stroke[1][i]
+            x2, y2 = stroke[0][i+1], stroke[1][i+1]
+            cv2.line(img,(x1,y1),(x2,y2),255,1)
+        
     img.save("drawing.png")
     print("✅ drawing.png 저장 완료")
 
