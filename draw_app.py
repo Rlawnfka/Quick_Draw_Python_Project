@@ -10,7 +10,7 @@ from tensorflow.keras.models import load_model
 
 # ---------------- 모델 및 클래스 ----------------
 model = load_model("models/quickdraw_model.h5")
-CLASSES = sorted([f[:-7] for f in os.listdir("data") if f.endswith(".ndjson")])
+CLASSES = sorted([f.replace(".ndjson", "") for f in os.listdir("data") if f.endswith(".ndjson")])
 print(f"AI 인식 클래스 {len(CLASSES)}개:", CLASSES)
 
 # ---------------- UI 설정 ----------------
@@ -104,6 +104,9 @@ def update_timer():
         timer_job = app.after(1000, update_timer)
     else:
         result_label.configure(text=f"⏰ 시간 초과! 정답은 {target_word}", text_color="#b00000")
+        canvas.unbind("<Button-1>")
+        canvas.unbind("<B-1Motion")
+        canvas.unbind("<ButtonRelease-1>")
 
 # ---------------- 제시어 시작 ----------------
 def start_game():
