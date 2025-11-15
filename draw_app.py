@@ -250,9 +250,9 @@ def predict_after_stroke():
 
     # 정답 여부와 상관없이 실시간 말풍선 업데이트
     if label == target_word and prob > 70:
-        ai_label.configure(text=f"오! 정답! ({label}, {prob:.1f}%)")
+        ai_label.configure(text=f"정답이에요. ({label}이에요. ")
     else:
-        ai_label.configure(text=f"음.. 이건 {label} ({prob:.1f}%) 인가요?")
+        ai_label.configure(text=f"음.. 이건 {label} 인가요?")
 
 
 # ==============================
