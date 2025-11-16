@@ -4,18 +4,14 @@ import random
 import numpy as np
 import customtkinter as ctk
 from customtkinter import CTkImage
-from PIL import Image, ImageDraw, ImageTk
+from PIL import Image, ImageDraw
 from tensorflow.keras.models import load_model
 
-# ==============================
 # 모델 로드
-# ==============================
 model = load_model("models/quickdraw_model.h5")
 CLASSES = sorted([f.replace(".ndjson", "") for f in os.listdir("data") if f.endswith(".ndjson")])
 
-# ==============================
-# 색상/전역 변수
-# ==============================
+# 색상/변수들
 RED = "#d6655a"
 WHITE = "#ffffff"
 
@@ -37,20 +33,16 @@ target_word = ""
 # 캔버스 크기
 CANVAS_W = 1100
 CANVAS_H = 420
-SQUARE_SIZE = 420  # 정사각형 리사이즈
+SQUARE_SIZE = 420
 
-# ==============================
 # CTk 기본 설정
-# ==============================
 ctk.set_appearance_mode("light")
 app = ctk.CTk()
 app.title("퀵, 드뤄우.")
 app.geometry("1280x720")
 app.resizable(False, False)
 
-# ==============================
 # 바깥 붉은 테두리
-# ==============================
 outer = ctk.CTkFrame(app, fg_color=RED, corner_radius=30)
 outer.pack(fill="both", expand=True, padx=15, pady=15)
 
@@ -62,9 +54,7 @@ inner.grid_rowconfigure(1, weight=70)
 inner.grid_rowconfigure(2, weight=18)
 inner.grid_columnconfigure(0, weight=1)
 
-# ==============================
-# 1. 상단 헤더 (제시어 + 시작 버튼 + 타이머)
-# ==============================
+# 제시어+시작 버튼+타이머
 header = ctk.CTkFrame(inner, fg_color=WHITE)
 header.grid(row=0, column=0, sticky="nsew", pady=(5, 5), padx=5)
 header.grid_columnconfigure(0, weight=1)
@@ -78,7 +68,7 @@ word_frame.grid_propagate(False)
 word_label = ctk.CTkLabel(word_frame, text="제시어:", font=("맑은 고딕", 24, "bold"), text_color=WHITE)
 word_label.place(relx=0.5, rely=0.5, anchor="center")
 
-# 게임 시작 버튼
+# 게임시작 버튼
 start_btn = ctk.CTkButton(header, text="게임 시작", width=160, height=60,
                           fg_color=RED, hover_color="#c4544b",
                           font=("맑은 고딕", 22, "bold"))
@@ -88,15 +78,13 @@ start_btn.grid(row=0, column=1, sticky="e", padx=(0,40), pady=(5,0))
 timer_label = ctk.CTkLabel(header, text="남은 시간: 20", font=("맑은 고딕", 20, "bold"), text_color=RED)
 timer_label.grid(row=0, column=2, sticky="e", padx=(0,40), pady=(5,0))
 
-# ==============================
-# 2. 중앙 그림 영역 (캔버스 + 도구 버튼)
-# ==============================
+# 캔버스 + 그림도구들
 center = ctk.CTkFrame(inner, fg_color=WHITE)
 center.grid(row=1, column=0, sticky="nsew", pady=(5,5), padx=5)
 center.grid_rowconfigure(0, weight=1)
 center.grid_columnconfigure(0, weight=1)
 
-# 캔버스 전체 테두리 박스
+# 캔버스 전체 테두리
 board = ctk.CTkFrame(center, fg_color=WHITE, border_width=4, border_color=RED, corner_radius=12)
 board.grid(row=0, column=0, sticky="nsew", padx=40, pady=5)
 board.grid_rowconfigure(0, weight=1)
@@ -124,9 +112,7 @@ undo_btn.pack(pady=10)
 redo_btn.pack(pady=10)
 clear_btn.pack(pady=10)
 
-# ==============================
-# 3. 하단 말풍선
-# ==============================
+# 하단 말풍선
 bottom = ctk.CTkFrame(inner, fg_color=WHITE)
 bottom.grid(row=2, column=0, sticky="nsew", pady=(5,5), padx=5)
 
@@ -146,9 +132,7 @@ ai_label = ctk.CTkLabel(bubble, text="그림을 그리면 제가 맞춰볼게요
                         font=("맑은 고딕",20), text_color="#333")
 ai_label.place(relx=0.5, rely=0.5, anchor="center")
 
-# ==============================
 # 드로잉 로직
-# ==============================
 def start_draw(event):
     global current_stroke
     current_stroke = [(event.x, event.y)]
@@ -172,14 +156,12 @@ canvas.bind("<Button-1>", start_draw)
 canvas.bind("<B1-Motion>", draw_line)
 canvas.bind("<ButtonRelease-1>", end_draw)
 
-# ==============================
-# AI 예측 (개선 버전)
-# ==============================
+# AI 예측 
 from PIL import ImageOps
 
 def get_prediction():
     if not strokes:
-        return None, None  # 빈 그림일 경우 예측하지 않음
+        return None  # 그림 없으면 None
 
     # 캔버스를 정사각형 이미지로 변환
     img = Image.new("L", (SQUARE_SIZE, SQUARE_SIZE), 255)
@@ -192,14 +174,11 @@ def get_prediction():
             x2, y2 = stroke[i+1]
             draw.line([x1, y1+offset_y, x2, y2+offset_y], fill=0, width=5)
 
-    # 비율 유지하면서 정사각형으로 리사이즈
+    # 비율 유지하면서 정사각형
     img_square = ImageOps.fit(img, (28,28), method=Image.LANCZOS)
-    
-    # 배열 변환 및 정규화
     arr = np.array(img_square)/255.0
 
-    # 모델 입력 형태 확인 후 reshape
-    input_shape = model.input_shape  # 예: (None,28,28,1)
+    input_shape = model.input_shape 
     if len(input_shape) == 4:
         arr = arr.reshape(1, input_shape[1], input_shape[2], input_shape[3])
     elif len(input_shape) == 3:
@@ -231,9 +210,7 @@ def predict_after_stroke():
     else:
         ai_label.configure(text=f"음.. 이건 {label} 인가요?")
 
-# ==============================
 # 캔버스/도구 기능
-# ==============================
 def redraw_all():
     canvas.delete("all")
     for stroke, color in strokes:
@@ -258,9 +235,12 @@ def clear_canvas():
     canvas.delete("all")
     ai_label.configure(text="")
 
-# ==============================
+app.bind_all("<Control-z>", lambda event: undo())
+app.bind_all("<Control-Z>", lambda event: undo())
+app.bind_all("<Control-y>", lambda evnet: redo())
+app.bind_all("<Control-Y>", lambda event: redo())
+
 # 라운드/타이머
-# ==============================
 def prepare_rounds():
     global round_words, round_index, correct_count, wrong_list
     round_index = 0
@@ -306,9 +286,7 @@ def end_round():
     
     start_round()
 
-# ==============================
 # 게임 종료 
-# ==============================
 def finish_game():
     global round_timer_id
     if round_timer_id:
@@ -329,9 +307,7 @@ def finish_game():
                                font=("맑은 고딕",24), text_color="#333")
     wrong_label.pack(pady=20)
 
-# ==============================
 # 게임 전체 시작
-# ==============================
 def start_game():
     start_btn.configure(state="disabled")
     prepare_rounds()
