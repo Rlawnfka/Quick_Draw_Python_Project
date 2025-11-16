@@ -29,7 +29,7 @@ def load_data(class_name, count=1000, size=28):
         images.append(np.array(img))
     return np.array(images)
 
-# 데이터셋 구성
+# 데이터 구성
 def prepare_dataset():
     X, y = [], []
     for i, cls in enumerate(CLASSES):
@@ -44,7 +44,7 @@ def prepare_dataset():
     y = to_categorical(y, num_classes=len(CLASSES))
     return X, y
 
-# 모델 학습 및 저장
+# 모델 학습,저장
 def train_model():
     X, y = prepare_dataset()
 
@@ -61,7 +61,6 @@ def train_model():
 
     os.makedirs(MODEL_DIR, exist_ok=True)
     model.save(os.path.join(MODEL_DIR, "quickdraw_model.h5"))
-    print("✅ 모델 저장 완료 → models/quickdraw_model.h5")
 
 if __name__ == "__main__":
     train_model()
