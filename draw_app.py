@@ -206,7 +206,7 @@ def predict_after_stroke():
         return
 
     if label == target_word:
-        ai_label.configure(text=f"이제 알겠어요! 정답은 {label}이에요.")
+        ai_label.configure(text=f"이제 알겠어요! 정답은 {label}에요.")
     else:
         ai_label.configure(text=f"음.. 이건 {label} 인가요?")
 
